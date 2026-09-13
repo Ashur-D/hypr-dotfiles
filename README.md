@@ -37,6 +37,10 @@ git clone https://github.com/Ashur-D/dotfiles && ./dotfiles/install/run.sh
 # Future
 - [ ] Looking to switch into Noctalia and its wayland compositor Umbriel.
 
+# Hypr Config Apps
+- [Hyprmod](https://github.com/BlueManCZ/hyprmod)
+- [hyprviz](https://github.com/timasoft/hyprviz)
+- [Hyprsettings](https://github.com/acropolis914/hyprsettings)
 
 ---
 
