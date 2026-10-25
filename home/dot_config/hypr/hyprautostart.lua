@@ -9,7 +9,7 @@ hl.on("hyprland.start", function()
 
         -- 2. Core system agents & wallpaper daemon setup
         -- hl.exec_cmd("systemctl --user start hyprpolkitagent")
-        hl.exec_cmd([[bash -c 'awww-daemon & if [ ! -d "${XDG_CACHE_HOME:-$HOME/.cache}/awww" ] && [ -f "$HOME/.config/hypr/wallpaper.png" ]; then sleep 0.5 && awww img "$HOME/.config/hypr/wallpaper.png"; fi']])
+        hl.exec_cmd([[bash -c 'first_boot=0; [ ! -d "${XDG_CACHE_HOME:-$HOME/.cache}/awww" ] && first_boot=1; awww-daemon & if [ "$first_boot" = 1 ] && [ -f "$HOME/.config/hypr/wallpaper.png" ]; then sleep 0.5 && awww img "$HOME/.config/hypr/wallpaper.png"; fi']])
 
         -- 3. Notifications and GTK theme settings
         hl.exec_cmd("mako")
@@ -23,5 +23,5 @@ hl.on("hyprland.start", function()
         hl.exec_cmd("hypridle")
 
         -- 5. Status bar
-        hl.exec_cmd("waybar")
+        hl.exec_cmd([[bash -c 'if [ ! -s "$HOME/.config/waybar/colors.css" ] && [ -f "$HOME/.config/hypr/wallpaper.png" ]; then ~/.config/scripts/wallpaper.sh "$HOME/.config/hypr/wallpaper.png"; fi; waybar']])
 end)

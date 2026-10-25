@@ -1,0 +1,52 @@
+#!/bin/bash
+# Generates the initial Matugen color palette from the bundled default wallpaper.
+# Re-runs when the default wallpaper changes: {{ include "dot_config/hypr/wallpaper.png" | sha256sum }}
+set -euo pipefail
+
+warn() { echo ":: WARNING: $*" >&2; }
+
+mkdir -p \
+    "$HOME/.config/waybar" \
+    "$HOME/.config/rofi" \
+    "$HOME/.config/mako" \
+    "$HOME/.config/hypr" \
+    "$HOME/.config/gtk-3.0" \
+    "$HOME/.config/gtk-4.0" \
+    "$HOME/.config/yazi" \
+    "$HOME/.config/kitty/themes" \
+    "$HOME/.config/btop/themes" \
+    "$HOME/.config/zed/themes" \
+    "$HOME/.config/nvim/lua" \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/hypr"
+
+DEFAULT_WALL="$HOME/.config/hypr/wallpaper.png"
+
+if command -v matugen >/dev/null 2>&1 && [ -f "$DEFAULT_WALL" ]; then
+    echo ":: Generating initial Matugen colors..."
+    matugen image -m dark -t scheme-tonal-spot --source-color-index 0 "$DEFAULT_WALL" \
+        || warn "matugen failed to generate initial colors"
+else
+    warn "matugen or default wallpaper not found; skipping initial color generation"
+fi
+
+# Fallbacks so Hyprland, Waybar, and GTK start cleanly even if matugen failed.
+if [ ! -s "$HOME/.config/hypr/colors.lua" ]; then
+    cat > "$HOME/.config/hypr/colors.lua" <<EOF
+return {
+    image = "$DEFAULT_WALL",
+    primary = "0xffcba6f7",
+    on_primary_container = "0xff313244",
+}
+EOF
+fi
+
+for css in "$HOME/.config/waybar/colors.css" "$HOME/.config/gtk-3.0/colors.css" "$HOME/.config/gtk-4.0/colors.css"; do
+    if [ ! -s "$css" ]; then
+        cat > "$css" <<'EOF'
+@define-color background #11111b;
+@define-color primary #cba6f7;
+@define-color secondary #f5c2e7;
+@define-color on_surface #cdd6f4;
+EOF
+    fi
+done
