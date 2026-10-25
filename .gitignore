@@ -1,37 +1,33 @@
-# Ignore installation log files
-install_log_*.log
-
-# Ignore backup directories
-# .old/
+# Cache & state files
+.cache/
+*.swp
+*.swo
+*~
 *.bak
 *.pre-dotfiles.*
 
-# Ignore yazi plugins
-configs/yazi/.config/yazi/plugins
+# Local overrides
+**/dot_config/hypr/local.lua
 
-# Ignore Neovim swap files
-*.swp
-*.swo
+# Generated themes & transient editor files
+**/dot_config/waybar/colors.css
+**/dot_config/rofi/colors.rasi
+**/dot_config/mako/mako-colors
+**/dot_config/kitty/themes/
+**/dot_config/kitty/current-theme.conf
+**/dot_config/btop/themes/
+**/dot_config/hypr/colors.conf
+**/dot_config/hypr/colors.lua
+**/dot_config/gtk-3.0/colors.css
+**/dot_config/gtk-4.0/colors.css
+**/dot_config/yazi/theme.toml
+**/dot_config/yazi/flavors/
+**/dot_config/yazi/plugins/
+**/dot_config/zed/themes/
+**/dot_config/nvim/lua/matugen*
+**/dot_config/nvim/lazy-lock.json
+**/dot_config/starship.toml
 
-# Ignore fastfetch/Yazi cache if you ever generate any locally
-.cache/
-
-# General Linux/System trash
-.Trash-*
-
-# Ignore Matugen generated color files
-# /media
-/tmp
-configs/yazi/.config/yazi/theme.toml
-configs/waybar/.config/waybar/colors.css
-configs/rofi/.config/rofi/colors.rasi
-configs/nvim/.config/nvim/lua/matugen_theme.lua
-configs/mako/.config/mako/mako-colors
-configs/kitty/.config/kitty/themes/Matugen.conf
-configs/kitty/.config/kitty/current-theme.conf
-configs/hypr/.config/hypr/colors.conf
-configs/hypr/.config/hypr/colors.lua
-configs/gtk-3.0/.config/gtk-3.0/colors.css
-configs/gtk-4.0/.config/gtk-4.0/colors.css
-# configs/zed/.config/zed/*
-configs/zed/.config/zed/themes
+# OS / tool specific
+.DS_Store
+Thumbs.db

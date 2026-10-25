@@ -1,0 +1,32 @@
+#!/bin/bash
+# Generates the initial Matugen color palette from the bundled default wallpaper.
+set -euo pipefail
+
+warn() { echo ":: WARNING: $*" >&2; }
+
+mkdir -p \
+    "$HOME/.config/kitty/themes" \
+    "$HOME/.config/btop/themes" \
+    "$HOME/.config/zed/themes" \
+    "$HOME/.config/nvim/lua" \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/hypr"
+
+DEFAULT_WALL="$HOME/.config/hypr/wallpaper.png"
+
+if command -v matugen >/dev/null 2>&1 && [ -f "$DEFAULT_WALL" ]; then
+    echo ":: Generating initial Matugen colors..."
+    matugen image -m dark "$DEFAULT_WALL" >/dev/null 2>&1 || warn "matugen failed to generate initial colors"
+else
+    warn "matugen or default wallpaper not found; skipping initial color generation"
+fi
+
+# Ensure colors.lua is never missing or empty so Hyprland starts cleanly.
+if [ ! -s "$HOME/.config/hypr/colors.lua" ]; then
+    cat > "$HOME/.config/hypr/colors.lua" <<EOF
+return {
+    image = "$DEFAULT_WALL",
+    primary = "0xffcba6f7",
+    on_primary_container = "0xff313244",
+}
+EOF
+fi

@@ -1,0 +1,61 @@
+# If not running interactively, don't do anything (leave this at the top of this file)
+[[ $- != *i* ]] && return
+
+###------------------- Editor used by CLI -----------------------###
+export EDITOR="nvim"
+export SUDO_EDITOR="nvim"
+
+###------------------- starship -----------------------###
+eval "$(starship init bash)"
+
+###------------------- aliases -----------------------###
+alias f="fastfetch"
+alias ga='git add .'
+alias gp='git push'
+alias gpp='git pull'
+alias gcm='git commit -m "updated"'
+
+function gc() {
+    local msg="$*"
+    if [ -z "$msg" ]; then
+        read -r -e -p "Enter commit message: " msg
+    fi
+
+    if [ -n "$msg" ]; then
+        git commit -m "$msg"
+    else
+        echo "Commit aborted."
+    fi
+}
+
+if command -v eza &>/dev/null; then
+    alias ls='eza --icons --group-directories-first'
+    alias ll='eza -la --icons --group-directories-first --git'
+    alias lt='eza --tree --level=2 --icons'
+else
+    alias ll='ls -la'
+fi
+
+if command -v lazygit &>/dev/null; then
+    alias lg='lazygit'
+fi
+
+###------------------- Modern CLI Integrations -----------------------###
+command -v zoxide &>/dev/null && eval "$(zoxide init bash)"
+command -v fzf &>/dev/null && eval "$(fzf --bash 2>/dev/null || fzf --key-bindings --completion 2>/dev/null)"
+
+###------------------- hyprland -----------------------###
+# tty1 autostart lives in ~/.bash_profile so it only runs once per login.
+alias hyprland='start-hyprland'
+
+###------------------- shell wrapper -----------------------###
+function y() {
+    local tmp cwd
+    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd <"$tmp"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
+export PATH="$HOME/.local/bin:$PATH"

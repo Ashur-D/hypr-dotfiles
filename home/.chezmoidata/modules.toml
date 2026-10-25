@@ -1,0 +1,194 @@
+# Template data: the single place that says what gets installed and enabled.
+#
+# A module is a bundle of:
+#   packages  installed by .chezmoiscripts/run_onchange_before_install.sh.tmpl
+#   services  enabled by   .chezmoiscripts/run_onchange_before_install.sh.tmpl (optional)
+#
+# `core` is always on. Everything else is chosen at `chezmoi init`
+# (stored as `enabled` in ~/.config/chezmoi/chezmoi.toml).
+#
+# Add a module:    add a [modules.<name>] block here.
+# Remove a module: delete its block. No script needs editing.
+
+# Baseline defaults (used when ~/.config/chezmoi/chezmoi.toml does not define them)
+enabled = ["core"]
+hasNvidia = false
+nvidiaOnly = false
+
+# ----------------------------------------------------------------------------
+# Always on
+# ----------------------------------------------------------------------------
+[modules.core]
+packages = [
+    # Hyprland & Ecosystem
+    "hyprland",
+    "hyprcursor",
+    "hyprlock",
+    "hyprsunset",
+    "hypridle",
+    "hyprpolkitagent",
+    "xdg-desktop-portal-hyprland",
+    "hyprshutdown",
+
+    # Desktop UI Components
+    "waybar",
+    "mako",
+    "rofi",
+    "awww",
+    "libnotify",
+
+    # Theming & Fonts
+    "matugen",
+    "bibata-cursor-theme-bin",
+    "adw-gtk-theme",
+    "maplemono-ttf",
+    "noto-fonts",
+    "noto-fonts-emoji",
+
+    # Terminal, Shell & Tools
+    "kitty",
+    "starship",
+    "fastfetch",
+    "yazi",
+    "neovim",
+    "chezmoi",
+    "xdg-user-dirs",
+    "jq",
+
+    # Clipboard
+    "wl-clipboard",
+    "cliphist",
+    "wl-clip-persist",
+
+    # Audio, Wi-Fi & Bluetooth
+    "pipewire",
+    "pipewire-pulse",
+    "wireplumber",
+    "wiremix",
+    "playerctl",
+    "iwd",
+    "impala",
+    "bluez",
+    "bluetui",
+
+    # Screenshots, Recording & Media
+    "hyprshot",
+    "satty",
+    "gpu-screen-recorder-ui",
+    "imagemagick",
+    "mpv",
+    "imv",
+
+    # System & Hardware Management
+    "power-profiles-daemon",
+    "python-gobject",
+    "btop",
+    "brightnessctl",
+]
+services = [
+    "bluetooth.service",
+    "power-profiles-daemon.service",
+]
+
+# Added automatically when an NVIDIA GPU is enabled at `chezmoi init`.
+[nvidia]
+packages = [
+    "nvidia-open-dkms",
+    "nvidia-utils",
+    "egl-wayland",
+    "libva-nvidia-driver",
+]
+# Only installed when [multilib] is enabled in /etc/pacman.conf.
+multilib_packages = [
+    "lib32-nvidia-utils",
+]
+
+# ----------------------------------------------------------------------------
+# Optional modules (selected at chezmoi init)
+# ----------------------------------------------------------------------------
+[modules.desktop]
+packages = [
+    "helium-browser-bin",
+    "discord",
+    "obsidian",
+    "localsend",
+    "spotifast-bin",
+]
+
+[modules.gaming]
+packages = [
+    "steam",
+    "proton-cachyos-slr",
+]
+
+[modules.dev]
+packages = [
+    "zed",
+    "lazygit",
+    "git",
+    "openssh",
+    "winboat",
+]
+
+[modules.cli]
+packages = [
+    "eza",
+    "zoxide",
+    "fzf",
+    "fd",
+    "ripgrep",
+    "7zip",
+]
+
+[modules.system]
+packages = [
+    "btop",
+    "systemctl-tui",
+    "systemd-manager-tui",
+    "netsonar-bin",
+    "gdu",
+    "efibootmgr",
+    "lact-git",
+]
+
+[modules.media]
+packages = [
+    "mpv",
+    "imv",
+    "stremio",
+]
+
+[modules.rice]
+packages = [
+    "catnap-git",
+    "weathr",
+    "rustormy-bin",
+    "cbonsai",
+    "terminal-rain-lightning",
+    "scope-tui",
+    "astroterm",
+    "asciinema",
+]
+
+# ----------------------------------------------------------------------------
+# Launcher overrides
+# ----------------------------------------------------------------------------
+[launcher]
+# Utility apps hidden from the application launcher.
+hidden_apps = [
+    "bssh",
+    "bvnc",
+    "avahi-discover",
+    "rofi-theme-selector",
+    "thunar-bulk-rename",
+    "thunar-settings",
+    "wiremix",
+    "cmake-gui",
+    "org.gnupg.pinentry-qt",
+    "xdg-desktop-portal-gdk",
+    "xgps",
+    "xgpsspeed",
+    "qv4l2",
+    "qvidcap",
+    "lstopo",
+]

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install tools
+        run: pacman -Syu --noconfirm chezmoi shellcheck git
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ShellCheck static scripts
+        run: shellcheck home/dot_config/scripts/executable_*.sh
+
+      - name: Render and ShellCheck chezmoi scripts (default & NVIDIA)
+        run: |
+          mkdir -p /tmp/rendered
+          for tmpl in home/.chezmoiscripts/*.sh.tmpl; do
+            name=$(basename "$tmpl" .tmpl)
+            chezmoi --source=. execute-template < "$tmpl" > "/tmp/rendered/$name"
+            shellcheck "/tmp/rendered/$name"
+          done
+          chezmoi --source=. execute-template --override-data '{"hasNvidia":true,"nvidiaOnly":true}' \
+            < home/.chezmoiscripts/run_onchange_before_install.sh.tmpl > /tmp/rendered/install-nvidia.sh
+          shellcheck /tmp/rendered/install-nvidia.sh
+
+      - name: Dry-run chezmoi init and apply
+        run: |
+          mkdir -p /tmp/test-home
+          chezmoi --source=. --destination=/tmp/test-home --config=/tmp/test-chezmoi.toml \
+            init --no-tty --promptDefaults --promptBool "Install NVIDIA drivers=false"
+          chezmoi --source=. --destination=/tmp/test-home --config=/tmp/test-chezmoi.toml \
+            apply --dry-run --verbose --exclude=externals
+          chezmoi --source=. --destination=/tmp/test-home --config=/tmp/test-chezmoi-nv.toml \
+            init --no-tty --promptDefaults \
+            --promptBool "Install NVIDIA drivers=true,Enable NVIDIA-only session variables (disable on hybrid laptops)=true"
+          chezmoi --source=. --destination=/tmp/test-home --config=/tmp/test-chezmoi-nv.toml \
+            apply --dry-run --verbose --exclude=externals
