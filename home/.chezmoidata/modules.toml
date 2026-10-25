@@ -42,6 +42,7 @@ packages = [
     "bibata-cursor-theme-bin",
     "adw-gtk-theme",
     "maplemono-ttf",
+    "ttf-nerd-fonts-symbols",
     "noto-fonts",
     "noto-fonts-emoji",
 
