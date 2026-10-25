@@ -1,0 +1,323 @@
+[bar]
+order = [ "main" ]
+
+    [bar.main]
+    background_opacity = 0.0
+    capsule = true
+    capsule_opacity = 0.59999998658895493
+    capsule_padding = 18.0
+    capsule_thickness = 0.99999998137354851
+    center = [ "workspaces" ]
+    end = [ "group:g1" ]
+    font_family = "Maple Mono"
+    margin_edge = 5
+    margin_ends = 5
+    padding = 0
+    start = [ "group:g2" ]
+    thickness = 37
+
+        [bar.main.dead_zone.actions]
+        left = "wallpaper-next"
+
+        [[bar.main.capsule_group]]
+        accordion = true
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        foreground = "secondary"
+        id = "g1"
+        members = [ "media", "tray" ]
+        opacity = 0.60000002384185791
+        padding = 18.0
+
+        [[bar.main.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border = ""
+        enabled = true
+        fill = "surface_variant"
+        foreground = "secondary"
+        id = "g2"
+        members = [ "clock", "recorder" ]
+        opacity = 0.60000002384185791
+        padding = 18.0
+
+[control_center]
+show_shortcut_labels = false
+
+    [[control_center.shortcuts]]
+    type = "session"
+
+    [[control_center.shortcuts]]
+    type = "clipboard"
+
+    [[control_center.shortcuts]]
+    type = "wallpaper"
+
+    [[control_center.shortcuts]]
+    type = "nightlight"
+
+    [[control_center.shortcuts]]
+    type = "weather"
+
+    [[control_center.shortcuts]]
+    type = "caffeine"
+
+[desktop_widgets]
+enabled = false
+schema_version = 2
+widget_order = []
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget]
+
+[idle]
+behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 600.0
+
+    [idle.behavior.lock-and-suspend]
+    action = "lock_and_suspend"
+    enabled = false
+    timeout = 900.0
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = false
+    timeout = 660.0
+
+[location]
+address = ""
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [
+    "lockscreen-login-box@WL-1",
+    "lockscreen-login-box@DP-1",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000002"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 960.0
+    cy = 799.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "primary"
+        background_opacity = 0.33000000000000002
+        background_radius = 32.0
+        center_password_text = true
+        input_opacity = 0.93000000000000005
+        input_radius = 32.0
+        layout = "compact"
+        show_caps_lock = false
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = false
+        show_session_buttons = false
+        show_unlock_hint = false
+        show_weather = false
+
+    [lockscreen_widgets.widget."lockscreen-login-box@WL-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 457.500244140625
+    cy = 389.58901977539062
+    output = "WL-1"
+    placement_height = 474.0
+    placement_width = 915.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@WL-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 240.0
+    box_width = 512.0
+    cx = 960.0
+    cy = 356.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        color = "primary"
+        font_family = "Maple Mono"
+        shadow = false
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
+    box_height = 64.0
+    box_width = 400.0
+    cx = 960.0
+    cy = 236.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000002.settings]
+        background = false
+        background_opacity = 0.0
+        color = "primary"
+        format = "%A, %B %d"
+        shadow = false
+
+[osd]
+offset_y = 80
+position = "bottom_center"
+
+[plugin_settings."ashur-d/wallpaper-widget"]
+close_on_apply = true
+
+[plugin_settings."cleboost/zed-provider"]
+new_window = true
+
+[plugin_settings."noctalia/mpvpaper"]
+picker_placement = "floating"
+video_directory = "/home/ash/.local/share/Steam/steamapps/workshop/content/431960/1439593106"
+
+[plugin_settings."noctalia/screen_recorder"]
+color_range = "full"
+hide_inactive = true
+video_source = "focused"
+
+[plugin_settings."tadomika_ari/w-engine"]
+grid_columns = 3
+
+[plugin_settings."tordex/processes"]
+panel_placement = "floating"
+
+[plugins]
+enabled = [
+    "noctalia/screen_recorder",
+    "cleboost/zed-provider",
+    "ashur-d/arch-packages",
+    "ashur-d/wallpaper-widget",
+    "ashur-d/nvim-projects"
+]
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
+
+[shell]
+avatar_path = "/home/ash/Pictures/wallpapers/wallpapers/wallpaper22.jpg"
+font_family = "Maple Mono"
+panel_anchor_bar = "main"
+settings_window_translucent = true
+umbriel_overview_type_to_launch_enabled = true
+
+    [shell.launcher]
+    categories = false
+    fetch_exchange_rates = false
+    layout = "simple"
+
+    [shell.mpris]
+    blacklist = [ "helium" ]
+
+    [shell.panel]
+    control_center_placement = "floating"
+    control_center_position = "auto"
+    session_placement = "floating"
+    transparency_mode = "glass"
+    wallpaper_placement = "floating"
+    wallpaper_position = "center"
+
+    [shell.screenshot]
+    annotate = true
+    pipe_command = ""
+    pipe_to_command = false
+
+    [shell.session]
+    show_shortcuts = false
+
+[theme]
+builtin = "Gruvbox"
+community_palette = "Cream Autumn"
+mode = "dark"
+source = "wallpaper"
+wallpaper_scheme = "soft"
+
+    [theme.templates]
+    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kitty", "starship" ]
+    enable_builtin_templates = true
+    community_ids = [ "fastfetch", "yazi" ]
+    enable_community_templates = true
+
+[wallpaper]
+directory = "/home/ash/Pictures/wallpapers/wallpapers"
+directory_dark = "/home/ash/Pictures/wallpapers/wallpapers"
+transition_on_startup = true
+
+    [wallpaper.default]
+    path = "/home/ash/Pictures/wallpapers/wallpapers/Crystal Cave with Glowing Mushrooms.png"
+
+    [wallpaper.last]
+    path = "/home/ash/Pictures/wallpapers/wallpapers/Crystal Cave with Glowing Mushrooms.png"
+
+    [wallpaper.monitors.DP-1]
+    path = "/home/ash/Pictures/wallpapers/wallpapers/Crystal Cave with Glowing Mushrooms.png"
+
+[widget.clock]
+format = "{:L%A %I:%M}"
+
+[widget.recorder]
+type = "noctalia/screen_recorder:recorder"
+
+[widget.tray]
+detached_panel = true
+drawer = true
+hide_passive = false
+match_adjacent_spacing = true
+
+[widget.workspaces]
+show_labels = false
+
+    [widget.workspaces.actions]
+    right = "wallpaper-random"

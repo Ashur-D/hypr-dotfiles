@@ -1,0 +1,96 @@
+#!/bin/bash
+# Installs yay-bin (if missing), enabled packages, services, and launcher overrides.
+# Re-runs only when packages, services, or launcher settings change.
+set -euo pipefail
+
+warn() { echo ":: WARNING: $*" >&2; }
+
+# --- Logging ----------------------------------------------------------------
+LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/hypr-noctalia"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/install.log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo ":: Starting installation. Log: $LOG_FILE"
+
+# --- 1. Bootstrap yay-bin from AUR if missing ------------------------------
+if ! command -v yay >/dev/null 2>&1; then
+    echo ":: Installing yay-bin from AUR..."
+    sudo pacman -S --needed --noconfirm git base-devel
+    tmp=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
+    (cd "$tmp/yay-bin" && makepkg -s --noconfirm && sudo pacman -U --noconfirm yay-bin-[0-9]*.pkg.tar.zst)
+    rm -rf "$tmp"
+fi
+
+# --- 2. Package List --------------------------------------------------------
+PKGS=(
+{{- range (concat (list "core") .enabled | uniq) }}
+{{-   if hasKey $.modules . }}
+{{-     $m := index $.modules . }}
+    # {{ . }}
+{{-     if hasKey $m "packages" }}
+{{-       range $m.packages }}
+    {{ . | quote }}
+{{-       end }}
+{{-     end }}
+{{-   end }}
+{{- end }}
+{{- if .hasNvidia }}
+    # nvidia
+{{-   range .nvidia.packages }}
+    {{ . | quote }}
+{{-   end }}
+{{- end }}
+)
+{{- if .hasNvidia }}
+# Headers for every installed kernel (linux, linux-lts, linux-zen, ...).
+for f in /usr/lib/modules/*/pkgbase; do
+    if [ -f "$f" ]; then PKGS+=("$(<"$f")-headers"); fi
+done
+# 32-bit driver only if [multilib] is enabled.
+if grep -q '^\[multilib\]' /etc/pacman.conf; then
+    PKGS+=({{ range .nvidia.multilib_packages }}{{ . | quote }} {{ end }})
+fi
+{{- end }}
+
+echo ":: Installing packages..."
+yay -S --needed --noconfirm --mflags="--nocheck" "${PKGS[@]}"
+
+# --- 3. System Services & Configuration ------------------------------------
+xdg-user-dirs-update
+
+# NetworkManager conflicts with iwd / systemd-networkd. Never switch a running
+# network stack automatically: it could cut the connection mid-run.
+conflict=
+for svc in iwd.service systemd-networkd.service; do
+    if systemctl is-enabled "$svc" >/dev/null 2>&1 || systemctl is-active "$svc" >/dev/null 2>&1; then
+        conflict=$svc
+    fi
+done
+if [ -n "$conflict" ]; then
+    warn "$conflict is enabled and conflicts with NetworkManager; skipping NetworkManager."
+    warn "To switch: sudo systemctl disable --now iwd systemd-networkd && sudo systemctl enable --now NetworkManager"
+fi
+
+enable() {
+    for svc in "$@"; do
+        if [ "$svc" = NetworkManager.service ] && [ -n "$conflict" ]; then continue; fi
+        sudo systemctl enable --now "$svc" || warn "failed to enable $svc"
+    done
+}
+{{- range (concat (list "core") .enabled | uniq) }}
+{{-   if hasKey $.modules . }}
+{{-     $m := index $.modules . }}
+{{-     if hasKey $m "services" }}
+enable{{ range $m.services }} {{ . | quote }}{{ end }}
+{{-     end }}
+{{-   end }}
+{{- end }}
+
+# --- 4. Hide utility apps from the launcher ---------------------------------
+mkdir -p "$HOME/.local/share/applications"
+for app in {{ range .launcher.hidden_apps }}{{ . | quote }} {{ end }}; do
+    [ -f "/usr/share/applications/$app.desktop" ] || continue
+    printf '[Desktop Entry]\nType=Application\nName=%s\nHidden=true\n' "$app" \
+        > "$HOME/.local/share/applications/$app.desktop"
+done

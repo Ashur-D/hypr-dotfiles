@@ -1,21 +1,30 @@
-# Ignore installation log files
-install_log_*.log
-
-# Ignore backup directories
-# .old/
+# Cache & state files
+.cache/
+*.swp
+*.swo
+*~
 *.bak
 *.pre-dotfiles.*
 
-# Ignore Neovim swap files
-*.swp
-*.swo
+# Local overrides
+**/dot_config/hypr/local.lua
 
-# Ignore fastfetch/Yazi cache if you ever generate any locally
-.cache/
+# Generated themes & transient editor files
+**/dot_config/kitty/themes/
+**/dot_config/kitty/current-theme.conf
+**/dot_config/btop/themes/
+**/dot_config/hypr/colors.conf
+**/dot_config/hypr/colors.lua
+**/dot_config/gtk-3.0/noctalia.css
+**/dot_config/gtk-4.0/noctalia.css
+**/dot_config/yazi/theme.toml
+**/dot_config/yazi/flavors/
+**/dot_config/yazi/plugins/
+**/dot_config/zed/themes/
+**/dot_config/nvim/lua/matugen*
+**/dot_config/nvim/lazy-lock.json
+**/dot_config/starship.toml
 
-# General Linux/System trash
-.Trash-*
-
-# Ignore Matugen generated color files
-/media
-/tmp
+# OS / tool specific
+.DS_Store
+Thumbs.db

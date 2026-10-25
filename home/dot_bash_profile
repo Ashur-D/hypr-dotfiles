@@ -1,0 +1,8 @@
+# Login shells read this file, not ~/.bashrc, so source it explicitly.
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+
+# Start the compositor on tty1. Lives here (not in .bashrc) so it only runs
+# once per login instead of being checked by every interactive shell.
+if [ "$(tty)" = "/dev/tty1" ]; then
+    exec start-hyprland
+fi

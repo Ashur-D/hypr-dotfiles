@@ -1,0 +1,167 @@
+# Template data: the single place that says what gets installed and enabled.
+#
+# A module is a bundle of:
+#   packages  installed by .chezmoiscripts/run_onchange_before_install.sh.tmpl
+#   services  enabled by   .chezmoiscripts/run_onchange_before_install.sh.tmpl (optional)
+#
+# `core` is always on. Everything else is chosen at `chezmoi init`
+# (stored as `enabled` in ~/.config/chezmoi/chezmoi.toml).
+#
+# Add a module:    add a [modules.<name>] block here.
+# Remove a module: delete its block. No script needs editing.
+
+# Baseline defaults (used when ~/.config/chezmoi/chezmoi.toml does not define them)
+enabled = ["core"]
+hasNvidia = false
+nvidiaOnly = false
+
+# ----------------------------------------------------------------------------
+# Always on
+# ----------------------------------------------------------------------------
+[modules.core]
+packages = [
+    # Compositor & Desktop Shell
+    "hyprland",
+    "hyprcursor",
+    "xdg-desktop-portal-hyprland",
+    "hyprpolkitagent",
+    "noctalia",
+
+    # Terminal, Shell & Tools
+    "kitty",
+    "starship",
+    "fastfetch",
+    "yazi",
+    "neovim",
+    "chezmoi",
+    "xdg-user-dirs",
+
+    # Audio & Power
+    "pipewire",
+    "pipewire-pulse",
+    "wireplumber",
+    "power-profiles-daemon",
+    "python-gobject",
+
+    # Networking & Bluetooth
+    "networkmanager",
+    "bluez",
+
+    # Capture, Fonts & GTK
+    "wl-clipboard",
+    "bibata-cursor-theme-bin",
+    "maplemono-ttf",
+    "noto-fonts",
+    "noto-fonts-emoji",
+    "adw-gtk-theme",
+
+    # Security & Secret Service
+    "oo7",
+    "libsecret",
+]
+services = [
+    "NetworkManager.service",
+    "bluetooth.service",
+    "power-profiles-daemon.service",
+]
+
+# Added automatically when an NVIDIA GPU is enabled at `chezmoi init`.
+[nvidia]
+packages = [
+    "nvidia-open-dkms",
+    "nvidia-utils",
+    "egl-wayland",
+    "libva-nvidia-driver",
+]
+# Only installed when [multilib] is enabled in /etc/pacman.conf.
+multilib_packages = [
+    "lib32-nvidia-utils",
+]
+
+# ----------------------------------------------------------------------------
+# Optional modules (selected at chezmoi init)
+# ----------------------------------------------------------------------------
+[modules.desktop]
+packages = [
+    "helium-browser-bin",
+    "discord",
+    "obsidian",
+    "localsend",
+    "spotifast-bin",
+]
+
+[modules.gaming]
+packages = [
+    "steam",
+    "proton-cachyos-slr",
+]
+
+[modules.dev]
+packages = [
+    "zed",
+    "lazygit",
+    "git",
+    "openssh",
+    "winboat",
+]
+
+[modules.cli]
+packages = [
+    "eza",
+    "zoxide",
+    "fzf",
+    "fd",
+    "ripgrep",
+    "7zip",
+]
+
+[modules.system]
+packages = [
+    "btop",
+    "systemctl-tui",
+    "systemd-manager-tui",
+    "netsonar-bin",
+    "gdu",
+    "efibootmgr",
+    "lact-git",
+]
+
+[modules.media]
+packages = [
+    "mpv",
+    "imv",
+    "stremio",
+]
+
+[modules.rice]
+packages = [
+    "catnap-git",
+    "weathr",
+    "rustormy-bin",
+    "cbonsai",
+    "terminal-rain-lightning",
+    "scope-tui",
+    "astroterm",
+    "asciinema",
+]
+
+# ----------------------------------------------------------------------------
+# Launcher overrides
+# ----------------------------------------------------------------------------
+[launcher]
+# Utility apps hidden from the application launcher.
+hidden_apps = [
+    "bssh",
+    "bvnc",
+    "avahi-discover",
+    "thunar-bulk-rename",
+    "thunar-settings",
+    "cmake-gui",
+    "org.gnupg.pinentry-qt",
+    "xdg-desktop-portal-gdk",
+    "xgps",
+    "xgpsspeed",
+    "qv4l2",
+    "qvidcap",
+    "lstopo",
+]

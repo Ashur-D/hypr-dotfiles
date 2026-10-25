@@ -1,0 +1,10 @@
+#!/bin/bash
+# Installs the Yazi plugins pinned in package.toml (full-border, git, starship, ...).
+# Re-runs only when package.toml changes: {{ include "dot_config/yazi/package.toml" | sha256sum }}
+set -euo pipefail
+
+if command -v ya >/dev/null 2>&1; then
+    ya pkg install || echo ":: WARNING: 'ya pkg install' failed" >&2
+else
+    echo ":: WARNING: 'ya' not found; skipping Yazi plugins" >&2
+fi

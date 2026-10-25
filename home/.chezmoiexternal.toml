@@ -1,0 +1,16 @@
+# Externals: chezmoi clones/updates these itself.
+#
+# The wallpapers repo contains a `wallpapers/` subfolder, so images end up in
+# ~/Pictures/wallpapers/wallpapers/ (matching Noctalia directory paths).
+# `chezmoi apply` refreshes it at most once a week; `chezmoi apply --refresh-externals`
+# forces an update.
+["Pictures/wallpapers"]
+    type = "git-repo"
+    url = "https://github.com/Ashur-D/wallpapers.git"
+    refreshPeriod = "168h"
+
+    ["Pictures/wallpapers".clone]
+        args = ["--depth", "1"]
+
+    ["Pictures/wallpapers".pull]
+        args = ["--ff-only"]

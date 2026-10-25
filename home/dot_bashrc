@@ -1,0 +1,107 @@
+# If not running interactively, don't do anything (leave this at the top of this file)
+[[ $- != *i* ]] && return
+
+###------------------- Editor used by CLI -----------------------###
+export EDITOR="nvim"
+export SUDO_EDITOR="nvim"
+
+###------------------- starship -----------------------###
+eval "$(starship init bash)"
+
+###------------------- aliases -----------------------###
+alias f="fastfetch"
+alias ga='git add .'
+alias gp='git push'
+alias gpp='git pull'
+alias gcm='git commit -m "updated"'
+
+function gc() {
+    local msg="$*"
+    if [ -z "$msg" ]; then
+        read -r -e -p "Enter commit message: " msg
+    fi
+
+    if [ -n "$msg" ]; then
+        git commit -m "$msg"
+    else
+        echo "Commit aborted."
+    fi
+}
+
+if command -v eza &>/dev/null; then
+    alias ls='eza --icons --group-directories-first'
+    alias ll='eza -la --icons --group-directories-first --git'
+    alias lt='eza --tree --level=2 --icons'
+else
+    alias ll='ls -la'
+fi
+
+if command -v lazygit &>/dev/null; then
+    alias lg='lazygit'
+fi
+
+###------------------- Modern CLI Integrations -----------------------###
+command -v zoxide &>/dev/null && eval "$(zoxide init bash)"
+command -v fzf &>/dev/null && eval "$(fzf --bash 2>/dev/null || fzf --key-bindings --completion 2>/dev/null)"
+
+###------------------- hyprland -----------------------###
+# tty1 autostart lives in ~/.bash_profile so it only runs once per login.
+alias hyprland='start-hyprland'
+
+###------------------- noctalia helpers -----------------------###
+noctalia-export() {
+    local default_dest
+    if command -v chezmoi &>/dev/null; then
+        local src="$(chezmoi source-path 2>/dev/null)"
+        if [ -n "$src" ] && [ -d "$src/dot_config/noctalia" ]; then
+            default_dest="$src/dot_config/noctalia/config.toml"
+        fi
+    fi
+    default_dest="${default_dest:-$HOME/.config/noctalia/config.toml}"
+
+    local dest="${1:-}"
+    if [ -z "$dest" ]; then
+        read -r -e -p "Export Noctalia config to [$default_dest]: " dest
+    fi
+    dest="${dest:-$default_dest}"
+    dest="${dest/#\~/$HOME}"
+
+    mkdir -p "$(dirname "$dest")"
+    if noctalia config export merged > "$dest"; then
+        echo ":: Noctalia config exported successfully to $dest"
+    else
+        echo ":: Error: Failed to export Noctalia config" >&2
+        return 1
+    fi
+}
+alias nexport='noctalia-export'
+
+noctalia-toggle() {
+    local cfg="$HOME/.config/noctalia/config.toml"
+    local custom="$HOME/.config/noctalia/config.toml.custom"
+
+    if [ -f "$cfg" ]; then
+        mv "$cfg" "$custom"
+        echo ":: Switched to Noctalia Absolute Factory Defaults"
+    elif [ -f "$custom" ]; then
+        mv "$custom" "$cfg"
+        echo ":: Switched to your Custom Rice"
+    else
+        echo ":: Error: Neither config.toml nor config.toml.custom found in ~/.config/noctalia/" >&2
+        return 1
+    fi
+    noctalia msg config-reload 2>/dev/null || true
+}
+alias ntoggle='noctalia-toggle'
+
+###------------------- shell wrapper -----------------------###
+function y() {
+    local tmp cwd
+    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd <"$tmp"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
+export PATH="$HOME/.local/bin:$PATH"

@@ -1,87 +1,82 @@
+# hypr-dotfiles (Noctalia Edition)
 
-# 🛠️ Recommended Arch Install Options
-- **Disk Configuration:** default structure: yes + use compression
-- **Bootloader:** grub
-- **Kernel:** zen-kernel
+Arch Linux + [Hyprland](https://hypr.land/) (Lua config) + [Noctalia](https://docs.noctalia.dev/) desktop shell, managed with [chezmoi](https://www.chezmoi.io/).
+
+This branch pairs Hyprland’s mature window management, smooth animations, and `hyprglass` shaders with Noctalia’s all-in-one desktop shell (capsule bar, iOS/macOS-style control center, clipboard history, app launcher, screen recorder, and dynamic wallpaper theming).
+
+## Recommended `archinstall` Options
+
+- **Disk configuration:** default layout + compression
+- **Kernel:** `linux-zen`
 - **Profile:** minimal
-- **Applications:** none
-- **Additional packages:** git & multilib
+- **Network configuration:** NetworkManager
+- **Additional packages:** `git` (and enable `multilib` if gaming / using 32-bit drivers)
 
+## Install
 
----
+On a fresh Arch install, log into the TTY as your regular user (not root) and run:
 
-# 🚀 Post Arch Install  
-
-Once in the TTY, please run the following command:
-
-```bash
-git clone https://github.com/Ashur-D/dotfiles && ./dotfiles/install/run.sh
+```sh
+sudo pacman -S --needed git chezmoi
+chezmoi init --apply --branch noctalia Ashur-D/hypr-dotfiles
 ```
 
-- **(Optional):** Before running the install script, uncomment any packages you may need in `install/packages.sh`.
-- **Restart your system** after the installer completes.
+`init` detects your GPU setup (desktop NVIDIA, hybrid laptop, or AMD/Intel), asks you to confirm, and lets you pick optional package modules. It then installs `yay-bin`, packages, kernel headers, services, wallpapers, and configs.
 
----
+Reboot or re-login on `tty1` when finished (`~/.bash_profile` starts Hyprland automatically on `tty1`).
 
-# 🎨 Themes
-> [!NOTE]
-> Some themes may need to be manually turned on.
-- *For example:* `vesktop`, `btop`, `zed`, etc., will need you to go into their respective theme sections and select the Matugen version.
-- For `vesktop`, this theme is called **"midnight"**.
+## Day to Day
 
----
+```sh
+chezmoi diff     # preview local vs repo changes
+chezmoi apply    # apply repo state
+chezmoi update   # git pull + apply + install any newly added packages
+```
 
-# 📝 To-Do
+### Noctalia Helpers
+- `nexport` (`noctalia-export`): Exports your live Noctalia UI changes back to `~/.config/noctalia/config.toml` (or into your chezmoi source repo).
+- `ntoggle` (`noctalia-toggle`): Instantly toggles between your custom rice and factory default Noctalia settings.
 
-- [ ] Get `starship` colors working with Matugen *(mostly done, just need better colors for the dir and system icons)*.
+## Per-Machine Overrides (`local.lua`)
 
----
+Monitor layout defaults to `preferred` mode and `auto` position/scale so it works on any screen out of the box.
 
-# 🖼️ Previews
+For machine-specific settings (custom monitor refresh rates, multi-monitor positions, extra binds, or environment variables), create `~/.config/hypr/local.lua`. `hyprland.lua` loads it last if present, and chezmoi ignores it:
 
-## Desktop Overview
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/8d69b2db-53c5-4944-b423-f2749750e1d5" />
+```lua
+-- ~/.config/hypr/local.lua
+hl.monitor({ output = "DP-1", mode = "1920x1080@180", position = "0x0", scale = 1 })
+```
 
-## Rofi Power Menu
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/99bd5858-1c32-4129-be43-2653779952cf" />
+## Modules
 
-## Rofi App Launcher
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/8d8e4370-7d54-4366-9ffb-9b5cf9798470" />
+Everything installable lives in `home/.chezmoidata/modules.toml`. A module bundles:
 
-## Rofi Performance Menu
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ddfb8c2d-050a-46a2-9a37-668becbf647d" />
+| Key | Meaning |
+|---|---|
+| `packages` | packages installed via `yay-bin` |
+| `services` | systemd services enabled via `systemctl` (optional) |
 
-## Rofi Wallpaper Selector
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/08a543f1-9d84-4e78-8ef9-a8ed12dc574b" />
+`core` is always installed. Optional modules are chosen at `chezmoi init` (`desktop`, `gaming`, `dev`, `cli`, `system`, `media`, `rice`). Re-run `chezmoi init --prompt` at any time to change your selection.
 
-## Rofi Clipboard 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/dd4c57d5-f834-4eb5-ba2d-84a5687180d2" />
+## Keybindings
 
-## Wifi & Audio TUI's
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/9b53bd8f-37ac-4417-b3ad-6772e6a48794" />
-
-## Hypr Lockscreen
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5b034cf2-0c85-408b-a50d-3a8345766106" />
-
-
-
-
-
-
-# ⌨️ Keybindings
-
-### System & Applications
+### System & Noctalia Shell
 | Keybind | Action |
 | :--- | :--- |
 | `SUPER` + `Return` | Open Terminal (Kitty) |
 | `SUPER` + `E` | Open File Manager (Yazi) |
-| `SUPER` + `Space` | Launch Apps (Rofi) |
-| `SUPER` + `Escape` | Launch Powermenu |
-| `SUPER` + `SHIFT` + `Escape` | Launch Performance Menu |
-| `SUPER` + `ALT` + `Space` | Launch Wallpaper Menu |
-| `SUPER` + `V` | Open Clipboard Manager (with rofi) |
-| `SUPER` + `CTRL` + `N` | Toggle Nightlight |
-| `SUPER` + `SHIFT` + `Space` | Toggle Top Bar (Waybar) |
+| `SUPER` + `Space` | Launch Apps (Noctalia Launcher) |
+| `SUPER` + `V` | Clipboard History (Noctalia Clipboard) |
+| `SUPER` + `Escape` | Control Center (Noctalia Control Center) |
+| `SUPER` + `SHIFT` + `Escape` | Power / Session Menu |
+| `SUPER` + `CTRL` + `W` | Random Wallpaper |
+| `SUPER` + `SHIFT` + `W` | Open Wallpaper Hub |
+| `SUPER` + `SHIFT` + `N` | Toggle Nightlight |
+| `SUPER` + `SHIFT` + `R` | Toggle Screen Recorder |
+| `ALT` + `Tab` | Window Switcher |
+| `Print Screen` | Regional screenshot (Noctalia Annotator) |
+| `SHIFT` + `Print Screen` | Fullscreen screenshot |
 
 ### Window Management
 | Keybind | Action |
@@ -90,47 +85,18 @@ git clone https://github.com/Ashur-D/dotfiles && ./dotfiles/install/run.sh
 | `SUPER` + `J` | Toggle split |
 | `SUPER` + `P` | Pseudo window |
 | `SUPER` + `T` | Toggle floating/tiling |
-| `SUPER` + `F` | Full width (Fullscreen 1) |
-| `SUPER` + `ALT` + `F` | Full screen (Fullscreen 0) |
+| `SUPER` + `F` | Full width (Maximized) |
+| `SUPER` + `ALT` + `F` | Full screen |
 | `SUPER` + `Arrow Keys` | Move focus (Left/Right/Up/Down) |
 | `SUPER` + `SHIFT` + `Arrow Keys` | Swap window (Left/Right/Up/Down) |
-| `SUPER` + `-` | Expand window left |
-| `SUPER` + `=` | Shrink window left |
-| `SUPER` + `SHIFT` + `-` | Shrink window up |
-| `SUPER` + `SHIFT` + `=` | Expand window down |
 | `SUPER` + `LMB` (Drag) | Move window |
 | `SUPER` + `RMB` (Drag) | Resize window |
 
-### Workspaces
+### Workspaces & Scratchpads
 | Keybind | Action |
 | :--- | :--- |
 | `SUPER` + `[0-9]` | Switch to workspace 1-10 |
 | `SUPER` + `SHIFT` + `[0-9]` | Move active window to workspace 1-10 |
-| `SUPER` + `scroll` | Move active window to workspace 1-10 |
-
-### Scratchpads (Special Workspaces)
-| Keybind | Action |
-| :--- | :--- |
-| `SUPER` + `A` | Toggle scratchpad A |
-| `SUPER` + `S` | Toggle scratchpad S |
-| `SUPER` + `D` | Toggle scratchpad D |
-| `SUPER` + `ALT` + `A` | Move window silently to scratchpad A |
-| `SUPER` + `ALT` + `S` | Move window silently to scratchpad S |
-| `SUPER` + `ALT` + `D` | Move window silently to scratchpad D |
-
-### Groups / Tabs
-| Keybind | Action |
-| :--- | :--- |
-| `SUPER` + `G` | Toggle window grouping |
-| `SUPER` + `ALT` + `G` | Move active window out of group |
-| `SUPER` + `SHIFT` + `A` | Move grouped window focus left |
-| `SUPER` + `SHIFT` + `D` | Move grouped window focus right |
-
-### Media & Screenshots
-| Keybind | Action |
-| :--- | :--- |
-| `Print Screen` | Regional screenshot (copies to clipboard) |
-| `SHIFT` + `Print Screen` | Fullscreen screenshot |
-| Media Keys | Play/Pause/Next/Previous track |
-
-</details>
+| `SUPER` + `Scroll` | Cycle active workspaces |
+| `SUPER` + `A` / `S` / `D` | Toggle scratchpad 1 / 2 / 3 |
+| `SUPER` + `ALT` + `A` / `S` / `D` | Move window silently to scratchpad 1 / 2 / 3 |

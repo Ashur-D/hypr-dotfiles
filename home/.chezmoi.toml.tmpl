@@ -1,0 +1,26 @@
+{{- /* Rendered by `chezmoi init`. Answers are remembered in ~/.config/chezmoi/chezmoi.toml. */ -}}
+
+{{- /* Detect GPUs from /sys/bus/pci/devices (works on minimal Arch without pciutils/lspci). */ -}}
+{{- $gpu := output "sh" "-c" "has_nv=0; has_other=0; for d in /sys/bus/pci/devices/*; do [ -r \"$d/class\" ] || continue; c=$(cat \"$d/class\"); v=$(cat \"$d/vendor\"); case $c in 0x03*) if [ \"$v\" = 0x10de ]; then has_nv=1; else has_other=1; fi ;; esac; done; printf '%s:%s' \"$has_nv\" \"$has_other\"" | trim -}}
+{{- $detectedNvidia := hasPrefix "1:" $gpu -}}
+{{- $detectedOnly := eq $gpu "1:0" -}}
+
+{{- $hasNvidia := promptBoolOnce . "hasNvidia" "Install NVIDIA drivers" $detectedNvidia -}}
+{{- $nvidiaOnly := false -}}
+{{- if $hasNvidia -}}
+{{-   $nvidiaOnly = promptBoolOnce . "nvidiaOnly" "Enable NVIDIA-only session variables (disable on hybrid laptops)" $detectedOnly -}}
+{{- end -}}
+
+{{- /* Which modules to enable besides `core`. Auto-discovered from modules.toml. */ -}}
+{{- $known := without ((include ".chezmoidata/modules.toml" | fromToml).modules | keys | sortAlpha) "core" -}}
+{{- $enabled := promptMultichoiceOnce . "enabled" "Optional modules to enable (x to toggle, Enter for none)" $known (list) -}}
+{{- /* .chezmoi.sourceDir already includes the `home` root, so keep its parent. */ -}}
+sourceDir = {{ dir .chezmoi.sourceDir | quote }}
+
+[diff]
+    exclude = ["scripts"]
+
+[data]
+    hasNvidia = {{ $hasNvidia }}
+    nvidiaOnly = {{ $nvidiaOnly }}
+    enabled = {{ $enabled | toJson }}
