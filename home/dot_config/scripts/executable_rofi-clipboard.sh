@@ -44,7 +44,7 @@ ROFI_EXIT=$?
 if [ $ROFI_EXIT -eq 11 ]; then
     # Clear entire cliphist database and wipe thumbnail cache
     cliphist wipe
-    rm -rf "$CACHE_DIR"/*
+    rm -rf "${CACHE_DIR:?}"/*
     exit 0
 fi
 
